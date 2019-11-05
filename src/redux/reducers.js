@@ -10,3 +10,22 @@ const initUser = {
   user:getItem('user')||{},
   token:getItem('token')||''
 }
+function user(prevState=initUser,action){
+  // 判断type
+  switch (action.type) {
+    case SAVE_USER:
+      // 保存用户信息到redux中的同时也要保存到localStorage
+      // prevState.user = action.data.user
+      setItem('user',action.data.user)
+      // 保存token串到redux中的同时压要保存到localStorage
+      setItem('token',action.data.token)
+      // prevState.token=action.data.token
+      return action.data
+
+    default:
+      return prevState
+  }
+}
+export default combineReducers({
+    user
+})
