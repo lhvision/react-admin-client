@@ -6,18 +6,53 @@ import axios from 'axios'
 // 引入图片
 import logo from './images/logo.png'
 import { Form, Icon, Input, Button, message } from 'antd';
+// 引入connect
+import { connect } from 'react-redux'
+// 引入action
+import { saveUser } from '../../redux/action-creators.js'
+// 引入接口文件
 
 const Item = Form.Item
+@connect(null, {
+  saveUser
+})
 @Form.create()
 class Login extends Component {
   handleSubmit = e => {
     // 阻止事件的默认行为
     e.preventDefault();
     // 表单的验证是否都通过了!
-    this.props.form.validateFields(async (error, values) => {
-       if (!error) {
-         // 发送异步
+    this.props.form.validateFields((error, values) => {
+      // values是一个对象--可以直接获取表单中的数据
+      // 错误 
+      if (!error) {
+         // message.sussess('表单验证成功')
+         // 获取账户和密码
+         const { username, password } = values
          
+         // 发送异步
+         axios.post('http://localhost:3000/api/login',{username,password})
+         .then(({data}) => {
+           // 判断发送的请求是否成功的
+           if(data.status===0){
+             // 请求成功了,提示信息:登录成功
+             message.success('登录成功')
+             // 保存用户信息
+             this.props.saveUser(data.data)
+             // 跳转界面
+           } else {
+             // 验证失败了
+             message.error(data.msg)
+             // 清空密码框
+             this.props.from.resetFields(['password'])
+           }
+         })
+         .catch((error)=>{
+           message.error('请求失败:'+error)
+         })
+         // 发送异步请求失败,获取用户信息,保存
+       } else {
+         message.error('表单验证失败')
        }
 
     })
