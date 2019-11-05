@@ -4,7 +4,7 @@ import './Login.less'
 // 引入axios
 import axios from 'axios'
 // 引入图片
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png'
 import { Form, Icon, Input, Button, message } from 'antd';
 // 引入connect
 import { connect } from 'react-redux'
@@ -12,7 +12,10 @@ import { connect } from 'react-redux'
 import { saveUser } from '../../redux/action-creators.js'
 // 引入接口文件
 import { reqLogin } from '../../api'
+// 引入WithCheckLogin
+import WithCheckLogin from '../with-check-login/WithCheckLogin.jsx'
 const Item = Form.Item
+@WithCheckLogin
 @connect(null, {
   saveUser
 })

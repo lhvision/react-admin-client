@@ -1,6 +1,6 @@
 // 引入路由组件
-import Login from "../pages/Login/Login";
-import Admin from "../pages/Admin/Admin";
+import Login from "../containers/Login/Login.jsx";
+import Admin from "../components/Admin/Admin.jsx";
 export default[
   {
     exact: true,
