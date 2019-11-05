@@ -11,7 +11,7 @@ import { connect } from 'react-redux'
 // 引入action
 import { saveUser } from '../../redux/action-creators.js'
 // 引入接口文件
-
+import { reqLogin } from '../../api'
 const Item = Form.Item
 @connect(null, {
   saveUser
@@ -22,38 +22,50 @@ class Login extends Component {
     // 阻止事件的默认行为
     e.preventDefault();
     // 表单的验证是否都通过了!
-    this.props.form.validateFields((error, values) => {
+    this.props.form.validateFields(async (error, values) => {
       // values是一个对象--可以直接获取表单中的数据
       // 错误 
       if (!error) {
          // message.sussess('表单验证成功')
          // 获取账户和密码
          const { username, password } = values
-         
-         // 发送异步
-         axios.post('http://localhost:3000/api/login',{username,password})
-         .then(({data}) => {
-           // 判断发送的请求是否成功的
-           if(data.status===0){
-             // 请求成功了,提示信息:登录成功
-             message.success('登录成功')
-             // 保存用户信息
-             this.props.saveUser(data.data)
-             // 跳转界面
-           } else {
-             // 验证失败了
-             message.error(data.msg)
-             // 清空密码框
-             this.props.from.resetFields(['password'])
-           }
-         })
-         .catch((error)=>{
-           message.error('请求失败:'+error)
-         })
+         const result = await reqLogin(username,password)
+          console.log(this)
+         // 判断是否登陆成功
+         if (result.status === 0){
+           // 成功啦
+           message.success('登陆成功')
+           this.props.saveUser(result.data)
+           // 跳转到首页
+           this.props.history.replace('/')
+         } else {
+           message.error(result.msg)
+         }
+        //  // 发送异步
+        //  axios.post('http://localhost:3000/api/login',{username,password})
+        //  .then(({data}) => {
+        //    // 判断发送的请求是否成功的
+        //    if(data.status===0){
+        //      // 请求成功了,提示信息:登录成功
+        //      message.success('登录成功')
+        //      // 保存用户信息
+        //      this.props.saveUser(data.data)
+        //      // 跳转界面
+        //    } else {
+        //      // 验证失败了
+        //      message.error(data.msg)
+        //      // 清空密码框
+        //      this.props.from.resetFields(['password'])
+        //    }
+        //  })
+        //  .catch((error)=>{
+        //    message.error('请求失败:'+error)
+        //  })
          // 发送异步请求失败,获取用户信息,保存
-       } else {
-         message.error('表单验证失败')
-       }
+       } 
+        //  else {
+        //    message.error('表单验证失败')
+        //  }
 
     })
   };
