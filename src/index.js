@@ -10,9 +10,11 @@ import App from './App.jsx'
 import store from './redux/store.js'
 // 引入redux
 import {Provider} from 'react-redux'
+// 引入国际化语言js
+import './i18n/i18n.js'
 // 渲染组件
 ReactDOM.render((
     <Provider store={store}>
-        <App/>
+      <App/>
     </Provider>
-) ,document.getElementById('root'))
+),document.getElementById('root'))
