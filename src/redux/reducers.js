@@ -1,7 +1,7 @@
 // 包含了多个的reducer, 更新/修改状态数据的函数
 
 // 引入action的type
-import {SAVE_USER} from './action-types.js'
+import {SAVE_USER,REMOVE_USER} from './action-types.js'
 // 引入redux
 import {combineReducers} from 'redux'
 // 引入storage.js
@@ -21,7 +21,16 @@ function user(prevState=initUser,action){
       setItem('token',action.data.token)
       // prevState.token=action.data.token
       return action.data
-
+    case REMOVE_USER:
+      // 清除用户信息
+      removeItem('user')
+      // 清除token
+      removeItem('token')
+      // 跟新数据
+      return {
+        user:{},
+        token:''
+      }
     default:
       return prevState
   }
