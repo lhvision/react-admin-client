@@ -26,7 +26,7 @@ class BasicLayout extends Component {
     this.setState({ collapsed });
   };
   render() {
-    //console.log(this.props)
+    
     const {t} = this.props
     return (
       <Layout style={{ minHeight: '100vh' }}>
@@ -40,11 +40,7 @@ class BasicLayout extends Component {
         <Layout>
          
           <HeaderMain />
-          <Content style={{ margin: '0 16px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>User</Breadcrumb.Item>
-              <Breadcrumb.Item>Bill</Breadcrumb.Item>
-            </Breadcrumb>
+          <Content style={{ margin: '40px 20px' }}>
             <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
               {
                 // children代表的是当前这个父级组件的所有的子级组件
@@ -52,7 +48,7 @@ class BasicLayout extends Component {
               }
             </div>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+          <Footer style={{ textAlign: 'center' }}>欢迎使用硅谷后台管理系统~~</Footer>
         </Layout>
       </Layout>
 
