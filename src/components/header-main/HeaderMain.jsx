@@ -10,15 +10,21 @@ import { withTranslation, getI18n } from 'react-i18next';
 // 引入connect
 import {connect} from 'react-redux'
 // 引入action-creators.js中的方法
-import {removeUser} from '../../redux/action-creators.js'
-
+import {removeUser,updateTitle} from '../../redux/action-creators.js'
+import dayjs from 'dayjs'
 const { Header } = Layout;
-@connect((state)=>({username:state.user.user.username}),{removeUser})
+@connect((state)=>(
+  {username:state.user.user.username},
+  {title: state.title
+  }),{removeUser})
 @withTranslation()
 class HeaderMain extends Component {
+  
   state = {
     isScreen: true,
-    isEnglish: getI18n().language === 'en'
+    isEnglish: getI18n().language === 'en',
+    //time: this.getTime()
+    time: this.time
   }
   // 切换全屏效果
   changeScreen = () => {
@@ -33,13 +39,23 @@ class HeaderMain extends Component {
       isScreen
     })
   }
+  getTime = () => dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss') // 展示
   // 界面渲染完毕的生命周期函数,刷新界面
   componentDidMount() {
+    console.log(Date.now())
     screenfull.on('change', this.screenChange);
+    // 设置定时器
+    this.timer = setInterval(() => {
+      this.setState({
+        time:this.getTime()
+      })
+    },1000)
   }
   // 组件不使用是在卸载之前移除监听器
   componentWillUnmount() {
     screenfull.off('change', this.screenChange);
+    // 清除定时器
+    clearInterval(this.timer)
   }
   // 国际化
   changeLanguage = () => {
@@ -50,6 +66,7 @@ class HeaderMain extends Component {
       isEnglish
     })
   }
+  
   // 退出操作
   loginOut=()=>{
     Modal.confirm({
@@ -61,9 +78,11 @@ class HeaderMain extends Component {
       }
     })
   }
+  
   render() {
-    const { isScreen, isEnglish } = this.state
-    const {username} = this.props
+    const { isScreen, isEnglish, time } = this.state
+    const {username,title,t} = this.props
+    
     // console.log(this.props)
     return (
       <Header style={{ background: '#fff', padding: 0 }} className="header-main">
@@ -74,8 +93,8 @@ class HeaderMain extends Component {
           <Button type="link" onClick={this.loginOut}>退出</Button>
         </div>
         <div className="header-content">
-          <div className="header-left">首页</div>
-          <div className="header-right">{Date.now()}</div>
+          <div className="header-left">{t(title)}</div>
+          <div className="header-right">{time}</div>
         </div>
 
       </Header>

@@ -3,10 +3,14 @@ import { Menu, Icon } from 'antd';
 // 引入菜单数据
 import menus from '../../../config/menus.js'
 import { withRouter, Link } from 'react-router-dom'
-
+// 引入connect
+import {connect} from 'react-redux'
+// 引入action
+import {updateTitle} from '../../../redux/action-creators.js'
 // 引入实现国际化的翻译的相关的包,高阶组件
 import { withTranslation } from 'react-i18next';
 const { SubMenu } = Menu;
+@connect(null,{updateTitle})
 @withTranslation()
 @withRouter
 class LeftNav extends Component {
@@ -72,7 +76,47 @@ class LeftNav extends Component {
       }
     }
   }
-
+  // 方法--根据路径找先对应title
+  findTitleByKey = (pathname) => {
+    // menus中找
+    for (let i =0; i < menus.length; i++){
+      const menu = menus[i]
+      // 判断当前的对象中是否有子对象
+      if (menu.children){
+        // 继续遍历子级的菜单
+        for (let j = 0; j < menu.children.length; j++){
+          // 当前数组中每个对象(子的菜单)
+          const cMenu = menu.children[j]
+          if (cMenu.key === pathname) {
+            return cMenu.title
+          }
+        }
+      } else {
+        if (menu.key === pathname) {
+          return menu.title
+        }
+      }
+    }
+  }
+  componentDidMount(){
+    // 获取路径
+    const {pathname} = this.props.location
+    // 根据路径找对应的title
+    const title = this.findTitleByKey(pathname)
+    // 跟新redux中的title数据
+    this.props.updateTitle(title)
+  }
+  // 选中额时候更新对应的title
+  selectItem = ({key}) => {
+    //key: "/user" 是一个路径 ----xxx是一个对象----item----node----innerText---获取到标题信息
+    // 获取到当前选中的标题信息(中文内容)----而是整个选项的menus.title---'键'
+    // t(menus.product)----进行翻译了
+    //const title=item.node.innerText
+    const title = this.findTitleByKey(key)
+    //const title='menus.home----键的方式'
+    // 更新操作---redux---action-creators中的updateTitle---action对象---->reducers---store
+    this.props.updateTitle(title)
+  }
   render() {
     // 调用方法显示菜单
     const menus = this.createMenus()
@@ -88,7 +132,7 @@ class LeftNav extends Component {
     const openKey = this.getOpenKey(pathname)
 
     return (
-      <Menu theme="dark" defaultSelectedKeys={[pathname]} defaultOpenKeys={[openKey]} mode="inline">
+      <Menu theme="dark" defaultSelectedKeys={[pathname]} defaultOpenKeys={[openKey]} mode="inline" onSelect={this.selectItem}>
         {
           menus
         }
