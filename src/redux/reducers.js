@@ -1,7 +1,7 @@
 // 包含了多个的reducer, 更新/修改状态数据的函数
 
 // 引入action的type
-import {SAVE_USER,REMOVE_USER,UPDATE_TITLE} from './action-types.js'
+import {SAVE_USER,REMOVE_USER,UPDATE_TITLE,GET_CATEGORIES,ADD_CATEGORY,UPDATE_CATEGORY,DELETE_CATEGORY} from './action-types.js'
 // 引入redux
 import {combineReducers} from 'redux'
 // 引入storage.js
@@ -44,7 +44,29 @@ function title(prevState='', action){
       return prevState
   }
 }
+
+// 对分类信息数据做相关的操作
+function categories(prevState= [],action){
+  switch (action.type) {
+    case GET_CATEGORIES:
+      return action.data
+    case ADD_CATEGORY:
+      return [...prevState, action.data]
+    case UPDATE_CATEGORY:
+      return prevState.map(category => {
+        if (category._id === action.data._id) {
+          return action.data
+        }
+        return category
+      })
+    case DELETE_CATEGORY:
+      return prevState.filter(category=>category._id!==action.data)
+    default:
+      return prevState
+  }
+}
 export default combineReducers({
     user,
-    title
+    title,
+    categories
 })
