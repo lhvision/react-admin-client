@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // 引入样式
 import './Login.less'
 // 引入axios
-import axios from 'axios'
+//import axios from 'axios'
 // 引入图片
 import logo from '../../assets/images/logo.png'
 import { Form, Icon, Input, Button, message } from 'antd';

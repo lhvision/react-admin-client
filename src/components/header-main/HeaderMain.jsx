@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Layout, Modal } from 'antd'
-import { Button, Radio, Icon } from 'antd';
+import { Button, Icon } from 'antd';
 // 引入样式
 import './HeaderMain.less'
 
@@ -10,13 +10,12 @@ import { withTranslation, getI18n } from 'react-i18next';
 // 引入connect
 import {connect} from 'react-redux'
 // 引入action-creators.js中的方法
-import {removeUser,updateTitle} from '../../redux/action-creators.js'
+import {removeUser} from '../../redux/action-creators.js'
 import dayjs from 'dayjs'
 const { Header } = Layout;
 @connect((state)=>(
-  {username:state.user.user.username},
-  {title: state.title
-  }),{removeUser})
+  {username:state.user.user.username,
+  title: state.title}),{removeUser})
 @withTranslation()
 class HeaderMain extends Component {
   

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout, Breadcrumb } from 'antd';
+import { Layout } from 'antd';
 import logo from '../../assets/images/logo.png'
 // 引入样式
 import './BasicLayout.less'
