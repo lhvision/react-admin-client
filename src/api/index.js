@@ -44,3 +44,26 @@ export const reqDeleteCategory = (categoryId) => ajax({
     categoryId
   }
 })
+
+// 获取商品信息数据的接口
+export const reqGetProducts = (pageNum, pageSize) => ajax({
+  method: 'GET',
+  url: '/product/list',
+  params: {
+    pageNum,
+    pageSize
+  }
+})
+
+// 添加商品信息数据的接口
+export const reqAddProduct = ({categoryId,name,price,desc,detail}) => ajax({
+  method: 'POST',
+  url: '/product/add',
+  data: {
+    categoryId,
+    name,
+    price,
+    desc,
+    detail
+  }
+})

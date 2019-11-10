@@ -7,7 +7,7 @@ class AddUpdateCategory extends Component {
   constructor(props){
     super(props)
     // 调用父级组件中的回调函数,并传入from对象(父级组件可以使用form对象及所有相关方法了)
-    this.props.setForm(this.props.form)
+    // this.props.setForm(this.props.form)
   }
   static propTypes = {
     setForm: PropTypes.func.isRequired,
@@ -15,6 +15,7 @@ class AddUpdateCategory extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
+    this.props.setForm(this.props.form)
     return (
       <Form>
         <Form.Item label="品类名称">
