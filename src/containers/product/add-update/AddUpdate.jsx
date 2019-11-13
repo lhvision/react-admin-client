@@ -10,7 +10,7 @@ import TextEditor from './text-editor/TextEditor.jsx'
 import { convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 // 引入api接口
-import { reqAddProduct } from '../../../api/index.js'
+import { reqAddProduct, reqUpdateProduct } from '../../../api/index.js'
 // 解构出Option Item
 const { Option } = Select
 const { Item } = Form
@@ -22,16 +22,26 @@ class AddUpdate extends Component {
     // 阻止事件的默认行为
     e.preventDefault()
     this.props.form.validateFields(async (err, values) => {
-      if(!err) {
+      if (!err) {
         console.log(values)
         const editorState = this.editor.state.editorState
         const detail = draftToHtml(convertToRaw(editorState.getCurrentContent()))
         const { categoryId, name, price, desc } = values
-        // 发送请求,真正的添加数据
-        // const result = await reqAddProduct({ categoryId, name, price, desc, detail })
-        await reqAddProduct({ categoryId, name, price, desc, detail })
-        //if(result.status === 0){     
-          this.props.history.push('/product')
+         
+        // 商品的id信息
+        const product = this.props.location.state
+        if (product) {
+          // 发送请求,真正的添加数据
+          
+          const productId = product._id
+          await reqUpdateProduct({productId,categoryId,name,price,desc,detail})
+        } else {
+          // const result = await reqAddProduct({ categoryId, name, price, desc, detail })
+         
+          await reqAddProduct({ categoryId, name, price, desc, detail })
+          //if(result.status === 0){     
+        }
+        this.props.history.push('/product')
         //}
       }
     })
@@ -46,78 +56,85 @@ class AddUpdate extends Component {
     }
   }
   render() {
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     // 解构出categories数据
     const { categories } = this.props
+    // 获取路由跳转后,传入进来的参数数据
+    const product = this.props.location.state || {}
+    console.log(this.props)
     return (
       <Card
-      title={
-        <div>
-          <Icon onClick={() => { this.props.history.goBack() }} type="arrow-left" />
-          <span>添加商品</span>
-        </div>
-      }
-    >
-      <Form labelCol={{ span: 2 }} wrapperCol={{ span: 8 }} onSubmit={this.submit}>
-        <Item label="商品名称">
-          {
-            getFieldDecorator('name', {
-              rules: [{ required: true, message: '请输入商品名称' }],
-            })(
-              <Input placeholder="请输入商品名称" />
-            )
-          }
+        title={
+          <div>
+            <Icon onClick={() => { this.props.history.goBack() }} type="arrow-left" />
+            <span>{product._id?'修改':'添加'}商品</span>
+          </div>
+        }
+      >
+        <Form labelCol={{ span: 2 }} wrapperCol={{ span: 8 }} onSubmit={this.submit}>
+          <Item label="商品名称">
+            {
+              getFieldDecorator('name', {
+                rules: [{ required: true, message: '请输入商品名称' }],
+                initialValue: product.name || ''
+              })(
+                <Input placeholder="请输入商品名称" />
+              )
+            }
 
-        </Item>
-        <Item label="商品描述">
-          {
-            getFieldDecorator('desc', {
-              rules: [{ required: true, message: '请输入商品描述' }],
-            })(
-              <Input placeholder="请输入商品描述" />
-            )
-          }
+          </Item>
+          <Item label="商品描述">
+            {
+              getFieldDecorator('desc', {
+                rules: [{ required: true, message: '请输入商品描述' }],
+                initialValue: product.desc || ''
+              })(
+                <Input placeholder="请输入商品描述" />
+              )
+            }
 
-        </Item>
-        <Item label="商品分类">
-          {
-            getFieldDecorator('categoryId', {
-              rules: [{ required: true, message: '请选择商品分类' }],
-            })(
-              <Select placeholder="请选择商品分类">
-                {
-                  categories.map(category => {
-                    return <Option key={category._id} value={category._id}>{category.name}</Option>
-                  })
-                }
+          </Item>
+          <Item label="商品分类">
+            {
+              getFieldDecorator('categoryId', {
+                rules: [{ required: true, message: '请选择商品分类' }],
+                initialValue: product.categoryId || '请选择商品分类'
+              })(
+                <Select placeholder="请选择商品分类">
+                  {
+                    categories.map(category => {
+                      return <Option key={category._id} value={category._id}>{category.name}</Option>
+                    })
+                  }
 
-              </Select>
-            )
-          }
+                </Select>
+              )
+            }
 
-        </Item>
-        <Item label="商品价格">
-          {
-            getFieldDecorator('price', {
-              rules: [{ required: true, message: '请输入商品价格' }],
-            })(
-              <InputNumber
-                formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                parser={value => value.replace(/￥\s?|(,*)/g, '')}
-              />
-            )
-          }
+          </Item>
+          <Item label="商品价格">
+            {
+              getFieldDecorator('price', {
+                rules: [{ required: true, message: '请输入商品价格' }],
+                initialValue: product.price || ''
+              })(
+                <InputNumber
+                  formatter={value => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  parser={value => value.replace(/￥\s?|(,*)/g, '')}
+                />
+              )
+            }
 
-        </Item>
-        <Item wrapperCol={{ span: 20 }} >
-          <TextEditor setEditor={(editor) => { this.editor = editor }} />
-        </Item>
-        <Item >
-          <Button type="primary" htmlType="submit">提交</Button>
-        </Item>
+          </Item>
+          <Item wrapperCol={{ span: 20 }} >
+            <TextEditor setEditor={(editor) => { this.editor = editor } } detail={product.detail || ''}/>
+          </Item>
+          <Item >
+            <Button type="primary" htmlType="submit">提交</Button>
+          </Item>
 
-      </Form>
-    </Card>
+        </Form>
+      </Card>
     );
   }
 }
