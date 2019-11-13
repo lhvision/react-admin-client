@@ -20,7 +20,7 @@ import { message } from 'antd'
 axios.defaults.baseURL = `http://localhost:3000/api`
 // 请求拦截器
 axios.interceptors.request.use((config) => {
-  console.log(config)
+ // console.log(config)
   // 获取config对象中的data参数
   let data = config.data
   if(data&&data instanceof Object){
