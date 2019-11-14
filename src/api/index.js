@@ -142,11 +142,11 @@ export const reqUpdateRole = (roleId, authName, menus) => ajax({
   }
 })
 // 删除角色信息的数据接口
-export const reqDeleteRole = (roleld) => ajax({
+export const reqDeleteRole = (roleId) => ajax({
   method: 'POST',
   url: '/role/delete',
   data: {
-    roleld
+    roleId
   }
 })
 

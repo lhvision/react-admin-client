@@ -2,7 +2,7 @@
 // 引入action的type
 import { SAVE_USER, REMOVE_USER, UPDATE_TITLE,GET_CATEGORIES,ADD_CATEGORY,UPDATE_CATEGORY, DELETE_CATEGORY,GET_ROLES,ADD_ROLE,UPDATE_ROLE,DELETE_ROLE,GET_USERS,ADD_USER,UPDATE_USER,DELETE_USER} from './action-types.js'
 // 引入接口文件
-import {reqCategories,reqAddCategory,reqUpdateCategory,reqDeleteCategory, reqGetRoles, reqAddRole, reqUpdateRole, reqDeleteRole,reqGetUsers } from '../api/index'
+import {reqCategories,reqAddCategory,reqUpdateCategory,reqDeleteCategory, reqGetRoles, reqAddRole, reqUpdateRole, reqDeleteRole,reqGetUsers,reqAddUser,reqUpdateUser,reqDeleteUser } from '../api/index'
 // 保存用户信息(的同时也要保存token)
 export const saveUser = (value) => ({ type: SAVE_USER, data: value })
 // 删除用户信息(的同时也要删除token)
@@ -107,13 +107,52 @@ export const deleteRole = (roleId) => {
     }
   }
 }
-// 获取角色信息的数据同步action对象
-// 获取角色信息的数据异步action函数
-// 获取角色信息的数据同步action对象
-// 获取角色信息的数据异步action函数
-// 获取角色信息的数据同步action对象
-// 获取角色信息的数据异步action函数
-// 获取角色信息的数据同步action对象
-// 获取角色信息的数据异步action函数
-// 获取角色信息的数据同步action对象
-// 获取角色信息的数据异步action函数
+// 获取用户信息的数据同步action对象s
+const getUserSuccess = (users) => ({ type: GET_USERS, data: users })
+// 获取用户信息的数据异步action函数
+export const getUsers = () => {
+  return async (dispatch) => {
+    const result = await reqGetUsers()
+    if (result.status === 0){
+      dispatch(getUserSuccess(result.data))
+    }
+  }
+}
+
+// 添加用户信息的数据同步action对象
+const addUserSuccess = (user) => ({ type: ADD_USER, data: user })
+// 添加用户信息的数据异步action函数
+export const addUser = ({username, password, phone, email, roleId}) => {
+  return async (dispatch) => {
+    const result = await reqAddUser({username, password, phone, email, roleId})
+    if (result.status === 0){
+      dispatch(addUserSuccess(result.data))
+    }
+  }
+}
+
+
+// 修改用户信息数据的同步action
+const updateUserSuccess = () => ({ type: UPDATE_USER })
+// 修改用户信息数据的异步action
+export const updateUser = (username, password) => {
+  return async (dispatch) => {
+    const result = await reqUpdateUser(username, password)
+    if (result.status === 0) {
+      dispatch(updateUserSuccess())
+    }
+  }
+}
+
+
+// 删除用户信息数据的同步action
+const deleteUserSuccess = (username) => ({ type: DELETE_USER, data: username })
+// 删除用户信息数据的异步action
+export const deleteUser = (username) => {
+  return async (dispatch) => {
+    const result = await reqDeleteUser(username)
+    if (result.status === 0) {
+      dispatch(deleteUserSuccess(username))
+    }
+  }
+}
