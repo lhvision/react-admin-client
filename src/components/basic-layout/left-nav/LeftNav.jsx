@@ -10,7 +10,7 @@ import {updateTitle} from '../../../redux/action-creators.js'
 // 引入实现国际化的翻译的相关的包,高阶组件
 import { withTranslation } from 'react-i18next';
 const { SubMenu } = Menu;
-@connect(null,{updateTitle})
+@connect(state=>({ menus: state.user.user.menus }),{updateTitle})
 @withTranslation()
 @withRouter
 class LeftNav extends Component {
@@ -26,7 +26,7 @@ class LeftNav extends Component {
     )
   }
   // 创建菜单的
-  createMenus = () => {
+  createMenus = (menus) => {
     return menus.map(menu => {
       // 有没有二级的菜单
       if (menu.children) {
@@ -117,9 +117,30 @@ class LeftNav extends Component {
     // 更新操作---redux---action-creators中的updateTitle---action对象---->reducers---store
     this.props.updateTitle(title)
   }
+  // 校验menus
+  checkMenus = () => {
+    return menus.reduce((prev, current) => {
+      // config目录中的menus.js --- 文件中暴露出来的是menus数组 --- 每个元素都是对象
+      // 当前登陆的用户对象也有一个menus---数组---中每一个元素都是字符串
+      // current ---- 对象---每个menu对象
+      // current.key ---- 每个字符串的路径
+      // 此时登陆用户的menus数组中当前的路径
+      const result = this.props.menus.includes(current.key)
+      if (result) {
+        prev.push(current)
+      } else if (current.children) {
+        const cMenus = current.children.filter(menu => this.props.menus.includes(menu.key))
+        if(cMenus.length){
+          prev.push({...current,children:cMenus})
+        }
+      }
+      return prev
+    }, [])
+  }
   render() {
     // 调用方法显示菜单
-    const menus = this.createMenus()
+    const newMenus = this.checkMenus()
+    const menus = this.createMenus(newMenus)
     // 获取当前组件的相对应的路径,如果要使用location对象,当前的组件要么有location属性,要么当前的组件应该是一个路由组件
     let { pathname } = this.props.location
     // 添加商品时默认选择,根据pathname找到对应的key
